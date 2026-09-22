@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# my-site
 
-## Getting Started
+Omer Beck's portfolio, live at [obeck.dev](https://obeck.dev). It's built with Next.js (App Router), Tailwind CSS, shadcn/ui and Motion, and deployed on Vercel. Domain terms live in [CONTEXT.md](CONTEXT.md), and decisions in [docs/adr](docs/adr).
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # site only; the Assistant answers with an error
+pnpm dev:vercel   # site + working Assistant (needs the one-time setup below)
+pnpm check        # lint, format, types, tests (what CI runs)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## The Assistant
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A floating "Ask about Omer" chat on every page. `app/api/chat/route.ts` streams answers from Claude Haiku through the Vercel AI Gateway. The Assistant only knows what's in `lib/projects.ts`, `lib/profile.ts` and `lib/site-config.ts`, rebuilt into its instructions on every request (`lib/assistant/instructions.ts`). Adding a Project updates the Assistant on the next deploy.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### One-time setup
 
-## Learn More
+1. **Link the folder to Vercel** so local dev gets the AI Gateway token:
+   ```bash
+   pnpm exec vercel login
+   pnpm exec vercel link
+   ```
+2. **Add Neon** in Vercel → Storage → Neon (free), connected to this project. That sets `DATABASE_URL`. Then run [`db/schema.sql`](db/schema.sql) once in the Neon SQL editor.
+3. **Set `CRON_SECRET`** in Vercel → Settings → Environment Variables (any long random string). It protects the daily job that deletes logs older than 90 days.
+4. **Cap spend**: in Vercel → AI Gateway, set a monthly budget.
+5. **Rate-limit** in Vercel → Firewall: add a rule for path `/api/chat` limiting to about 10 requests per minute per IP.
 
-To learn more about Next.js, take a look at the following resources:
+### Reading Conversation logs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+In the Neon SQL editor:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sql
+SELECT created_at, conversation_id, question, answer
+FROM conversation_logs
+ORDER BY created_at DESC
+LIMIT 100;
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Logs are anonymous and expire after 90 days. See [ADR 0001](docs/adr/0001-log-assistant-conversations.md) and `/privacy`.

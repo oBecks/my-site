@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { AssistantWidget } from "@/components/assistant/assistant-widget";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
@@ -55,6 +56,7 @@ export default function RootLayout({
           <SiteHeader />
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
+          <AssistantWidget />
         </ThemeProvider>
         <Analytics />
       </body>
