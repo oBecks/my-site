@@ -1,8 +1,10 @@
 # Gemini reviews a PR and posts inline comments.
 # Adapted from google-github-actions/run-gemini-cli examples/workflows/pr-review:
 # API-key auth only (no GitHub App, no Google Cloud WIF, so no id-token), and
-# the action pinned to a commit. Gemini gets no shell or file tools, only
-# reading the PR and writing a review.
+# the action and Gemini CLI pinned. Gemini gets no shell or file tools: only
+# activate_skill (loads the review guidelines) plus reading the PR and writing
+# a review. The repo and PR number are passed in the command because the
+# extension's prompt expects them from env vars it can't read without a shell.
 
 name: "🔎 Gemini Review"
 
@@ -58,10 +60,10 @@ jobs:
           GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
         with:
           gemini_api_key: "${{ secrets.GEMINI_API_KEY }}"
-          gemini_cli_version: "${{ vars.GEMINI_CLI_VERSION }}"
+          gemini_cli_version: "${{ vars.GEMINI_CLI_VERSION || '0.60.0' }}"
           gemini_debug: "${{ fromJSON(vars.GEMINI_DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}"
           gemini_model: "${{ vars.GEMINI_MODEL }}"
-          upload_artifacts: "true" # TEMP: debugging first run
+          upload_artifacts: "${{ vars.UPLOAD_ARTIFACTS }}"
           workflow_name: "gemini-review"
           # issue_comment triggers are issues to GitHub, so pass the PR number explicitly.
           github_pr_number: "${{ github.event.pull_request.number || github.event.issue.number }}"
@@ -97,11 +99,21 @@ jobs:
                 }
               },
               "tools": {
-                "core": []
+                "core": ["activate_skill"]
               }
             }
           extensions: |
             [
               "https://github.com/gemini-cli-extensions/code-review"
             ]
-          prompt: "/pr-code-review"
+          prompt: "/pr-code-review Repository: ${{ github.repository }}. Pull request number: ${{ github.event.pull_request.number || github.event.issue.number }}. Additional user instructions: ${{ inputs.additional_context || 'none' }}"
+
+      # run-gemini-cli exits 0 even when Gemini errors out, which leaves the PR
+      # silently unreviewed. Fail here so the dispatcher posts a failure comment.
+      - name: "Fail if Gemini reported an error"
+        if: steps.gemini_pr_review.outputs.error != ''
+        env:
+          GEMINI_ERROR: "${{ steps.gemini_pr_review.outputs.error }}"
+        run: |-
+          echo "::error title=Gemini review failed::${GEMINI_ERROR}"
+          exit 1
