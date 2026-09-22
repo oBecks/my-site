@@ -26,9 +26,9 @@ async function loadInter(weight: number) {
 // Previews like LinkedIn's Featured card shrink this to ~360px wide, so
 // everything is sized to stay legible at roughly 30% scale.
 export default async function OpengraphImage() {
-  const [bold, medium, logo] = await Promise.all([
+  const [bold, semibold, logo] = await Promise.all([
     loadInter(700),
-    loadInter(500),
+    loadInter(600),
     readFile(join(process.cwd(), "app/icon.png")),
   ]);
   const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
@@ -43,9 +43,6 @@ export default async function OpengraphImage() {
         justifyContent: "space-between",
         padding: "72px 80px",
         backgroundColor: "#0a0a0a",
-        backgroundImage:
-          "radial-gradient(circle at 85% 20%, rgba(255,255,255,0.10), transparent 45%), linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-        backgroundSize: "100% 100%, 60px 60px, 60px 60px",
         color: "#fafafa",
         fontFamily: "Inter",
       }}
@@ -64,12 +61,11 @@ export default async function OpengraphImage() {
         <div
           style={{
             marginTop: 28,
-            fontSize: 54,
-            fontWeight: 500,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.15,
-            color: "#a3a3a3",
-            maxWidth: 960,
+            fontSize: 58,
+            fontWeight: 600,
+            lineHeight: 1.2,
+            color: "#c8c8c8",
+            maxWidth: 1000,
           }}
         >
           {headline}
@@ -85,10 +81,10 @@ export default async function OpengraphImage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logoSrc} width={84} height={84} alt="" />
-          <div style={{ fontSize: 40, fontWeight: 500 }}>{siteConfig.role}</div>
+          <img src={logoSrc} width={92} height={92} alt="" />
+          <div style={{ fontSize: 44, fontWeight: 600 }}>{siteConfig.role}</div>
         </div>
-        <div style={{ fontSize: 40, fontWeight: 500, color: "#a3a3a3" }}>
+        <div style={{ fontSize: 44, fontWeight: 600, color: "#c8c8c8" }}>
           {domain}
         </div>
       </div>
@@ -97,7 +93,7 @@ export default async function OpengraphImage() {
       ...size,
       fonts: [
         { name: "Inter", data: bold, weight: 700, style: "normal" },
-        { name: "Inter", data: medium, weight: 500, style: "normal" },
+        { name: "Inter", data: semibold, weight: 600, style: "normal" },
       ],
     }
   );
