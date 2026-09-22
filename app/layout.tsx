@@ -18,7 +18,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // TODO: point NEXT_PUBLIC_SITE_URL at your real domain once deployed.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
   title: {
     default: `${siteConfig.name}, ${siteConfig.role}`,
     template: `%s, ${siteConfig.name}`,

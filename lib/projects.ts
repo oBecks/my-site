@@ -20,7 +20,8 @@ export const projects: Project[] = [
   {
     slug: "flow-metrics",
     title: "Flow Metrics",
-    summary: "A dashboard that turns raw event logs into team-level delivery metrics.",
+    summary:
+      "A dashboard that turns raw event logs into team-level delivery metrics.",
     description: [
       "Flow Metrics ingests deploy and PR events from GitHub and CI, then computes lead time, deploy frequency, and change failure rate per team.",
       "Built the ingestion pipeline, the aggregation layer, and the dashboard UI. Handles a few million events a day without falling behind.",
@@ -38,7 +39,8 @@ export const projects: Project[] = [
   {
     slug: "reef",
     title: "Reef",
-    summary: "A lightweight component library for internal tools, shared across four product teams.",
+    summary:
+      "A lightweight component library for internal tools, shared across four product teams.",
     description: [
       "Reef started as a way to stop four teams from rebuilding the same dropdown. It's a themeable component set on top of Radix primitives.",
       "Shipped with a Storybook instance, visual regression tests, and a migration guide that got the whole org off the old library in six weeks.",
@@ -55,7 +57,8 @@ export const projects: Project[] = [
   {
     slug: "tidepool",
     title: "Tidepool",
-    summary: "A CLI that snapshots and diffs local database state for faster debugging.",
+    summary:
+      "A CLI that snapshots and diffs local database state for faster debugging.",
     description: [
       "Tidepool grew out of debugging a flaky staging environment: it snapshots a Postgres database, then diffs two snapshots row by row.",
       "Used daily by the backend team to catch migrations that silently corrupt data before they hit production.",
@@ -72,7 +75,8 @@ export const projects: Project[] = [
   {
     slug: "night-market",
     title: "Night Market",
-    summary: "An e-commerce storefront for a small batch coffee roaster, from checkout to fulfillment.",
+    summary:
+      "An e-commerce storefront for a small batch coffee roaster, from checkout to fulfillment.",
     description: [
       "Full storefront build for a local roaster: product catalog, subscriptions, and a fulfillment queue their two-person team runs by hand.",
       "Optimized for the slow connections their customers actually have, not a fast office wifi. LCP under 1.8s on 4G.",

@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowSquareOut, GithubLogo } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowLeft,
+  ArrowSquareOut,
+  GithubLogo,
+} from "@phosphor-icons/react/dist/ssr";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";

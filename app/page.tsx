@@ -62,8 +62,8 @@ export default function Home() {
       <section className="mx-auto w-full max-w-5xl px-6 pb-24">
         <div className="max-w-2xl border-t border-border/60 pt-10">
           <p className="text-lg leading-relaxed text-muted-foreground">
-            I work across the stack, from database schema to the last pixel
-            of the UI. Most recently focused on developer tooling and
+            I work across the stack, from database schema to the last pixel of
+            the UI. Most recently focused on developer tooling and
             performance-sensitive frontends.
           </p>
         </div>

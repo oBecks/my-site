@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { GithubLogo, LinkedinLogo, EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
+import {
+  GithubLogo,
+  LinkedinLogo,
+  EnvelopeSimple,
+} from "@phosphor-icons/react/dist/ssr";
 import { siteConfig } from "@/lib/site-config";
 
 const socialLinks = [
@@ -21,7 +25,9 @@ export function SiteFooter() {
               key={label}
               href={href}
               target={href.startsWith("mailto:") ? undefined : "_blank"}
-              rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+              rel={
+                href.startsWith("mailto:") ? undefined : "noopener noreferrer"
+              }
               aria-label={label}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-[color,background-color,border-color,transform] duration-150 ease-[var(--ease-out-strong)] hover:border-foreground/30 hover:bg-muted hover:text-foreground active:scale-90"
             >

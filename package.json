@@ -2,11 +2,15 @@
   "name": "my-site",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "test": "vitest",
+    "check": "eslint && prettier --check . && tsc --noEmit && vitest run --passWithNoTests"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -29,7 +33,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
+    "prettier": "^3.9.8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.1"
   }
 }

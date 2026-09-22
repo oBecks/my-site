@@ -29,7 +29,9 @@ export function ThemeToggle() {
         className="theme-icon absolute transition-[opacity,transform] duration-300 ease-[var(--ease-in-out-strong)]"
         style={{
           opacity: isDark ? 1 : 0,
-          transform: isDark ? "rotate(0deg) scale(1)" : "rotate(-90deg) scale(0.5)",
+          transform: isDark
+            ? "rotate(0deg) scale(1)"
+            : "rotate(-90deg) scale(0.5)",
         }}
       />
       <Moon
@@ -38,7 +40,9 @@ export function ThemeToggle() {
         className="theme-icon absolute transition-[opacity,transform] duration-300 ease-[var(--ease-in-out-strong)]"
         style={{
           opacity: isDark ? 0 : 1,
-          transform: isDark ? "rotate(90deg) scale(0.5)" : "rotate(0deg) scale(1)",
+          transform: isDark
+            ? "rotate(90deg) scale(0.5)"
+            : "rotate(0deg) scale(1)",
         }}
       />
     </button>
