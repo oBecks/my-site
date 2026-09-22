@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -17,9 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // TODO: point NEXT_PUBLIC_SITE_URL at your real domain once deployed.
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://obeck.dev"
   ),
   title: {
     default: `${siteConfig.name}, ${siteConfig.role}`,
@@ -56,6 +56,7 @@ export default function RootLayout({
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
