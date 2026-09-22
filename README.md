@@ -39,3 +39,5 @@ LIMIT 100;
 ```
 
 Logs are anonymous and expire after 90 days. See [ADR 0001](docs/adr/0001-log-assistant-conversations.md) and `/privacy`.
+
+<!-- Gemini review debug run, do not merge. -->
