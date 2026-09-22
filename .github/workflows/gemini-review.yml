@@ -61,7 +61,7 @@ jobs:
           gemini_cli_version: "${{ vars.GEMINI_CLI_VERSION }}"
           gemini_debug: "${{ fromJSON(vars.GEMINI_DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}"
           gemini_model: "${{ vars.GEMINI_MODEL }}"
-          upload_artifacts: "${{ vars.UPLOAD_ARTIFACTS }}"
+          upload_artifacts: "true" # TEMP: debugging first run
           workflow_name: "gemini-review"
           # issue_comment triggers are issues to GitHub, so pass the PR number explicitly.
           github_pr_number: "${{ github.event.pull_request.number || github.event.issue.number }}"
