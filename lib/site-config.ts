@@ -2,7 +2,8 @@ export const siteConfig = {
   name: "Omer Beck",
   monogram: "OB",
   role: "Software Engineer",
-  tagline: "I build fast, reliable software and the tools that ship it.",
+  tagline:
+    "Equal parts tinkering and gamifying, chasing an idea until it actually works.",
   email: "beckomerrr@gmail.com",
   social: {
     github: "https://github.com/oBecks",

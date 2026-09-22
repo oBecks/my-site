@@ -6,7 +6,6 @@ export type Project = {
   stack: string[];
   year: string;
   role: string;
-  image: string;
   links: {
     live?: string;
     github?: string;
@@ -14,80 +13,70 @@ export type Project = {
   featured?: boolean;
 };
 
-// TODO: replace with your real projects. Swap `image` for an actual
-// screenshot or og-image of each project once you have one.
 export const projects: Project[] = [
   {
-    slug: "flow-metrics",
-    title: "Flow Metrics",
+    slug: "commit-pet",
+    title: "Commit Pet",
     summary:
-      "A dashboard that turns raw event logs into team-level delivery metrics.",
+      "A GitHub App that grows a pixel pet from your commits, with an MCP server so coding agents can check on it too.",
     description: [
-      "Flow Metrics ingests deploy and PR events from GitHub and CI, then computes lead time, deploy frequency, and change failure rate per team.",
-      "Built the ingestion pipeline, the aggregation layer, and the dashboard UI. Handles a few million events a day without falling behind.",
+      "Commit Pet is a GitHub App that gives every repo its own pet. Install it, and each push feeds the pet, which grows from egg to hatchling to juvenile to adult as XP builds up, rendered as a live SVG badge you can drop straight into your README.",
+      "Once a release ships, the pet switches into a deployed phase and starts reacting to open issues instead of commits. Built the whole pipeline solo: GitHub webhooks write to Postgres through Drizzle, Clerk handles GitHub OAuth for the dashboard, and an MCP server lets coding agents like Claude Code check and update a repo's pet directly from the terminal.",
     ],
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "tRPC"],
-    year: "2025",
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Drizzle ORM",
+      "Clerk",
+      "MCP",
+      "Vercel",
+    ],
+    year: "2026",
     role: "Solo developer",
-    image: "https://picsum.photos/seed/flow-metrics-project/1200/800",
     links: {
-      live: "https://example.com",
-      github: "https://github.com/example/flow-metrics",
+      live: "https://commit-pet.vercel.app",
+      github: "https://github.com/oBecks/commit-pet",
     },
     featured: true,
   },
   {
-    slug: "reef",
-    title: "Reef",
+    slug: "quizip",
+    title: "Quizip",
     summary:
-      "A lightweight component library for internal tools, shared across four product teams.",
+      "A real-time multiplayer trivia party game for iOS and Android: host a room, share a code, and race the clock together with no sign-up.",
     description: [
-      "Reef started as a way to stop four teams from rebuilding the same dropdown. It's a themeable component set on top of Radix primitives.",
-      "Shipped with a Storybook instance, visual regression tests, and a migration guide that got the whole org off the old library in six weeks.",
+      "Quizip is built around one mechanic: a host starts a room, friends join with a short code, and everyone answers the same multiple-choice question at once on their own phone. Each question runs on a 15-second timer, and answering faster scores more, from 1000 points down to a floor of 500.",
+      "Built with Flutter for iOS and Android, backed entirely by Firebase: Cloud Firestore holds room and game state, and Anonymous Authentication gives each player an identity with no account required. The question bank pulls from the Open Trivia DB API and refreshes automatically every three days via a scheduled GitHub Action.",
     ],
-    stack: ["React", "Radix UI", "Storybook", "Vitest"],
-    year: "2024",
-    role: "Lead developer",
-    image: "https://picsum.photos/seed/reef-project/1200/800",
-    links: {
-      github: "https://github.com/example/reef",
-    },
+    stack: [
+      "Flutter",
+      "Firebase",
+      "Cloud Firestore",
+      "Provider",
+      "Open Trivia DB",
+    ],
+    year: "2026",
+    role: "Solo developer",
+    links: {},
     featured: true,
   },
   {
-    slug: "tidepool",
-    title: "Tidepool",
+    slug: "my-site",
+    title: "This Portfolio",
     summary:
-      "A CLI that snapshots and diffs local database state for faster debugging.",
+      "A fast, minimal Next.js portfolio built to show real, shipped projects instead of placeholders.",
     description: [
-      "Tidepool grew out of debugging a flaky staging environment: it snapshots a Postgres database, then diffs two snapshots row by row.",
-      "Used daily by the backend team to catch migrations that silently corrupt data before they hit production.",
+      "The site you're looking at right now. Built with the Next.js App Router and styled with Tailwind CSS and shadcn/ui on top of Base UI primitives, aiming for something quick to load and easy to keep current.",
+      "Scroll reveals run on Motion, theming (including the light/dark toggle) runs on next-themes, and the whole thing is typed end-to-end in TypeScript with ESLint, Prettier, and Vitest wired into a single check script.",
     ],
-    stack: ["Rust", "PostgreSQL", "Clap"],
-    year: "2024",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "Motion"],
+    year: "2026",
     role: "Solo developer",
-    image: "https://picsum.photos/seed/tidepool-project/1200/800",
     links: {
-      github: "https://github.com/example/tidepool",
+      github: "https://github.com/oBecks/my-site",
     },
     featured: true,
-  },
-  {
-    slug: "night-market",
-    title: "Night Market",
-    summary:
-      "An e-commerce storefront for a small batch coffee roaster, from checkout to fulfillment.",
-    description: [
-      "Full storefront build for a local roaster: product catalog, subscriptions, and a fulfillment queue their two-person team runs by hand.",
-      "Optimized for the slow connections their customers actually have, not a fast office wifi. LCP under 1.8s on 4G.",
-    ],
-    stack: ["Next.js", "Stripe", "Sanity"],
-    year: "2023",
-    role: "Solo developer",
-    image: "https://picsum.photos/seed/night-market-project/1200/800",
-    links: {
-      live: "https://example.com",
-    },
   },
 ];
 
