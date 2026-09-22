@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
+import { ProjectCover } from "@/components/project-cover";
 import type { Project } from "@/lib/projects";
 
 export function ProjectCard({ project }: { project: Project }) {
@@ -9,15 +9,10 @@ export function ProjectCard({ project }: { project: Project }) {
       href={`/projects/${project.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl ring-1 ring-border transition-[transform,box-shadow] duration-200 ease-[var(--ease-out-strong)] hover:ring-foreground/30 active:scale-[0.98]"
     >
-      <div className="relative aspect-[3/2] w-full overflow-hidden bg-muted">
-        <Image
-          src={project.image}
-          alt=""
-          fill
-          sizes="(min-width: 768px) 33vw, 100vw"
-          className="object-cover transition-transform duration-300 ease-[var(--ease-out-strong)] group-hover:scale-[1.03]"
-        />
-      </div>
+      <ProjectCover
+        project={project}
+        className="relative aspect-[3/2] w-full transition-transform duration-300 ease-[var(--ease-out-strong)] group-hover:scale-[1.03]"
+      />
       <div className="flex flex-1 flex-col gap-2 p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-heading text-base font-medium tracking-tight">

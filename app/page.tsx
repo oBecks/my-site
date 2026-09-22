@@ -1,10 +1,17 @@
 import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowRight,
+  GithubLogo,
+  LinkedinLogo,
+} from "@phosphor-icons/react/dist/ssr";
 import { buttonVariants } from "@/components/ui/button";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { getFeaturedProjects } from "@/lib/projects";
 import { siteConfig } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
+
+const heroButtonClass = "h-11 px-5 text-base";
 
 export default function Home() {
   const featured = getFeaturedProjects();
@@ -15,20 +22,50 @@ export default function Home() {
         <div className="animate-hero-in">
           <p className="text-sm text-muted-foreground">{siteConfig.name}</p>
           <h1 className="mt-3 max-w-2xl text-4xl font-medium tracking-tight text-balance md:text-6xl">
-            {siteConfig.role} building things that last.
+            I turn problems into things worth playing with.
           </h1>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-muted-foreground">
             {siteConfig.tagline}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/projects" className={buttonVariants({ size: "lg" })}>
+            <Link
+              href="/projects"
+              className={cn(buttonVariants({ size: "lg" }), heroButtonClass)}
+            >
               View work
             </Link>
             <Link
               href={`mailto:${siteConfig.email}`}
-              className={buttonVariants({ size: "lg", variant: "outline" })}
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                heroButtonClass
+              )}
             >
               Contact
+            </Link>
+            <Link
+              href={siteConfig.social.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                heroButtonClass
+              )}
+            >
+              <GithubLogo size={18} />
+              GitHub
+            </Link>
+            <Link
+              href={siteConfig.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                heroButtonClass
+              )}
+            >
+              <LinkedinLogo size={18} />
+              LinkedIn
             </Link>
           </div>
         </div>
@@ -62,9 +99,10 @@ export default function Home() {
       <section className="mx-auto w-full max-w-5xl px-6 pb-24">
         <div className="max-w-2xl border-t border-border/60 pt-10">
           <p className="text-lg leading-relaxed text-muted-foreground">
-            I work across the stack, from database schema to the last pixel of
-            the UI. Most recently focused on developer tooling and
-            performance-sensitive frontends.
+            I like owning a project end to end, from the database schema to the
+            last pixel of the UI. Most of what&apos;s above started as an idea I
+            couldn&apos;t stop poking at until it turned into something worth
+            using.
           </p>
         </div>
       </section>
