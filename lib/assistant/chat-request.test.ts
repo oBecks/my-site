@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { UIMessage } from "ai";
 import {
+  MAX_ANSWER_LENGTH,
   MAX_HISTORY_MESSAGES,
   MAX_QUESTION_LENGTH,
   parseChatRequest,
@@ -46,6 +47,27 @@ describe("parseChatRequest", () => {
       ok: false,
       error: "Question is too long",
     });
+  });
+
+  it("rejects an earlier answer longer than a real one could be", () => {
+    const padded = "a".repeat(MAX_ANSWER_LENGTH + 1);
+    const result = parseChatRequest(
+      body([
+        message("user", "hi", "m1"),
+        message("assistant", padded, "m2"),
+        message("user", "and?", "m3"),
+      ])
+    );
+    expect(result.ok).toBe(false);
+  });
+
+  it.each([
+    ["a null part", [null]],
+    ["a text part without text", [{ type: "text" }]],
+    ["a text part with non-string text", [{ type: "text", text: 42 }]],
+  ])("rejects %s instead of throwing", (_, parts) => {
+    const result = parseChatRequest(body([{ id: "m1", role: "user", parts }]));
+    expect(result).toEqual({ ok: false, error: "Invalid message" });
   });
 
   it("rejects client-supplied system messages", () => {

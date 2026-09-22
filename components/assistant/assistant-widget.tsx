@@ -1,10 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { flushSync } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useChat } from "@ai-sdk/react";
 import { ChatCircleDots, X } from "@phosphor-icons/react";
 import { AssistantChat } from "@/components/assistant/assistant-chat";
+
+// Below Tailwind's `sm` breakpoint the panel covers the whole screen.
+const FULL_SCREEN_QUERY = "(max-width: 639.98px)";
+
+function subscribeToFullScreen(onChange: () => void) {
+  const query = window.matchMedia(FULL_SCREEN_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function useFullScreenPanel() {
+  return useSyncExternalStore(
+    subscribeToFullScreen,
+    () => window.matchMedia(FULL_SCREEN_QUERY).matches,
+    () => false
+  );
+}
 
 export function AssistantWidget() {
   const [open, setOpen] = useState(false);
@@ -13,9 +31,14 @@ export function AssistantWidget() {
   const reduceMotion = useReducedMotion();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const fullScreen = useFullScreenPanel();
+  // Full screen, the panel is modal: nothing behind it can take focus.
+  const modal = open && fullScreen;
 
+  // flushSync so the toggle is no longer inert by the time it takes focus.
   function close() {
-    setOpen(false);
+    flushSync(() => setOpen(false));
     toggleRef.current?.focus();
   }
 
@@ -24,7 +47,7 @@ export function AssistantWidget() {
     inputRef.current?.focus();
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setOpen(false);
+        flushSync(() => setOpen(false));
         toggleRef.current?.focus();
       }
     }
@@ -32,13 +55,30 @@ export function AssistantWidget() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
+  // Everything outside the widget, e.g. the header, main and footer. Next's
+  // route announcer stays live so tapping a project link is still announced.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!modal || !root) return;
+    const background = Array.from(document.body.children).filter(
+      (element) =>
+        !element.contains(root) &&
+        element.tagName !== "NEXT-ROUTE-ANNOUNCER" &&
+        !element.hasAttribute("inert")
+    );
+    background.forEach((element) => element.setAttribute("inert", ""));
+    return () =>
+      background.forEach((element) => element.removeAttribute("inert"));
+  }, [modal]);
+
   return (
-    <>
+    <div ref={rootRef} className="contents">
       <AnimatePresence>
         {open && (
           <motion.div
             key="assistant-panel"
             role="dialog"
+            aria-modal={modal}
             aria-label="Ask about Omer"
             initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -78,10 +118,12 @@ export function AssistantWidget() {
         onClick={() => (open ? close() : setOpen(true))}
         aria-label={open ? "Close assistant" : "Ask about Omer"}
         aria-expanded={open}
+        // Hidden under the full-screen panel, which has its own close button.
+        inert={modal}
         className="fixed right-4 bottom-4 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-[var(--ease-out-strong)] hover:scale-105 active:scale-95 sm:right-6 sm:bottom-6"
       >
         {open ? <X size={22} /> : <ChatCircleDots size={24} weight="fill" />}
       </button>
-    </>
+    </div>
   );
 }

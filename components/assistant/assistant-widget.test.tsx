@@ -37,9 +37,22 @@ vi.mock("motion/react", async () => {
   };
 });
 
+// jsdom has no matchMedia; tests flip `phoneWidth` to get the full-screen panel.
+let phoneWidth = false;
+function stubMatchMedia() {
+  window.matchMedia = ((query: string) => ({
+    matches: phoneWidth,
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  })) as unknown as typeof window.matchMedia;
+}
+
 beforeEach(() => {
   messages = [];
   sendMessage.mockClear();
+  phoneWidth = false;
+  stubMatchMedia();
 });
 
 afterEach(cleanup);
@@ -86,6 +99,36 @@ describe("AssistantWidget", () => {
     await user.click(headerClose);
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("leaves the page usable beside the panel on desktop", async () => {
+    const page = document.createElement("main");
+    document.body.appendChild(page);
+
+    await openAssistant();
+
+    expect(page).not.toHaveAttribute("inert");
+    expect(screen.getByRole("dialog")).toHaveAttribute("aria-modal", "false");
+    page.remove();
+  });
+
+  it("makes the page behind the full-screen panel inert on phones", async () => {
+    phoneWidth = true;
+    const page = document.createElement("main");
+    document.body.appendChild(page);
+
+    const user = await openAssistant();
+
+    expect(screen.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
+    expect(page).toHaveAttribute("inert");
+
+    await user.keyboard("{Escape}");
+
+    expect(page).not.toHaveAttribute("inert");
+    expect(
+      screen.getByRole("button", { name: "Ask about Omer" })
+    ).toHaveFocus();
+    page.remove();
   });
 
   it("asks a starter question in one click", async () => {
