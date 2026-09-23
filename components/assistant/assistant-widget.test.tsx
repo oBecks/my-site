@@ -1,9 +1,16 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UIMessage } from "ai";
 import { AssistantWidget } from "@/components/assistant/assistant-widget";
+import { openAssistant as openFromElsewhere } from "@/lib/assistant/open-assistant";
 
 const sendMessage = vi.fn();
 let messages: UIMessage[] = [];
@@ -53,9 +60,13 @@ beforeEach(() => {
   sendMessage.mockClear();
   phoneWidth = false;
   stubMatchMedia();
+  window.localStorage.clear();
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 async function openAssistant() {
   const user = userEvent.setup();
@@ -191,6 +202,84 @@ describe("AssistantWidget", () => {
     expect(screen.getByText("Commit Pet").tagName).toBe("STRONG");
     expect(
       screen.queryByRole("button", { name: "What has Omer built?" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens when something else on the page asks it to", () => {
+    render(<AssistantWidget />);
+
+    act(() => openFromElsewhere());
+
+    expect(
+      screen.getByRole("dialog", { name: "Ask about Omer" })
+    ).toBeInTheDocument();
+  });
+});
+
+describe("AssistantWidget nudge", () => {
+  const nudgeName = "Ask my AI assistant anything about me";
+
+  function renderAndWait() {
+    vi.useFakeTimers();
+    render(<AssistantWidget />);
+    act(() => vi.advanceTimersByTime(2500));
+  }
+
+  it("points Visitors at the Assistant after a short delay", () => {
+    vi.useFakeTimers();
+    render(<AssistantWidget />);
+    expect(
+      screen.queryByRole("button", { name: nudgeName })
+    ).not.toBeInTheDocument();
+
+    act(() => vi.advanceTimersByTime(2500));
+
+    expect(screen.getByRole("button", { name: nudgeName })).toBeInTheDocument();
+  });
+
+  it("opens the Assistant when clicked, and never shows again", () => {
+    renderAndWait();
+
+    fireEvent.click(screen.getByRole("button", { name: nudgeName }));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: nudgeName })
+    ).not.toBeInTheDocument();
+
+    cleanup();
+    renderAndWait();
+    expect(
+      screen.queryByRole("button", { name: nudgeName })
+    ).not.toBeInTheDocument();
+  });
+
+  it("can be dismissed without opening the Assistant", () => {
+    renderAndWait();
+
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+
+    expect(
+      screen.queryByRole("button", { name: nudgeName })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Ask about Omer" })
+    ).toHaveFocus();
+  });
+
+  it("never appears if the Assistant is opened before the delay", () => {
+    vi.useFakeTimers();
+    render(<AssistantWidget />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Ask about Omer" }));
+    fireEvent.click(
+      screen.getAllByRole("button", { name: "Close assistant" })[0]
+    );
+    act(() => vi.advanceTimersByTime(2500));
+
+    expect(
+      screen.queryByRole("button", { name: nudgeName })
     ).not.toBeInTheDocument();
   });
 });

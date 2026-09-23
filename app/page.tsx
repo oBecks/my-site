@@ -5,6 +5,7 @@ import {
   LinkedinLogo,
 } from "@phosphor-icons/react/dist/ssr";
 import { buttonVariants } from "@/components/ui/button";
+import { AskAssistantLink } from "@/components/assistant/ask-assistant-link";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { getFeaturedProjects } from "@/lib/projects";
@@ -68,6 +69,7 @@ export default function Home() {
               LinkedIn
             </Link>
           </div>
+          <AskAssistantLink />
         </div>
       </section>
 

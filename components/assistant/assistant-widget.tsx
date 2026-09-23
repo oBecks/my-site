@@ -4,11 +4,20 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useChat } from "@ai-sdk/react";
-import { ChatCircleDots, X } from "@phosphor-icons/react";
+import { Robot, X } from "@phosphor-icons/react";
 import { AssistantChat } from "@/components/assistant/assistant-chat";
+import {
+  AssistantNudge,
+  hasSeenNudge,
+  rememberNudgeSeen,
+} from "@/components/assistant/assistant-nudge";
+import { OPEN_ASSISTANT_EVENT } from "@/lib/assistant/open-assistant";
 
 // Below Tailwind's `sm` breakpoint the panel covers the whole screen.
 const FULL_SCREEN_QUERY = "(max-width: 639.98px)";
+
+// Lets the hero finish animating in before the nudge draws the eye away.
+const NUDGE_DELAY_MS = 2500;
 
 function subscribeToFullScreen(onChange: () => void) {
   const query = window.matchMedia(FULL_SCREEN_QUERY);
@@ -26,6 +35,9 @@ function useFullScreenPanel() {
 
 export function AssistantWidget() {
   const [open, setOpen] = useState(false);
+  const [nudge, setNudge] = useState<"waiting" | "showing" | "retired">(
+    "waiting"
+  );
   // Lives here rather than in the panel so closing it keeps the Conversation.
   const chat = useChat();
   const reduceMotion = useReducedMotion();
@@ -35,6 +47,36 @@ export function AssistantWidget() {
   const fullScreen = useFullScreenPanel();
   // Full screen, the panel is modal: nothing behind it can take focus.
   const modal = open && fullScreen;
+
+  // Once the Visitor has found the Assistant, the nudge never comes back.
+  function retireNudge() {
+    setNudge("retired");
+    rememberNudgeSeen();
+  }
+
+  function openPanel() {
+    setOpen(true);
+    retireNudge();
+  }
+
+  useEffect(() => {
+    if (hasSeenNudge()) return;
+    const timer = setTimeout(
+      () => setNudge((state) => (state === "waiting" ? "showing" : state)),
+      NUDGE_DELAY_MS
+    );
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    function onOpen() {
+      setOpen(true);
+      setNudge("retired");
+      rememberNudgeSeen();
+    }
+    window.addEventListener(OPEN_ASSISTANT_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, onOpen);
+  }, []);
 
   // flushSync so the toggle is no longer inert by the time it takes focus.
   function close() {
@@ -73,6 +115,20 @@ export function AssistantWidget() {
 
   return (
     <div ref={rootRef} className="contents">
+      <AnimatePresence>
+        {nudge === "showing" && !open && (
+          <AssistantNudge
+            key="assistant-nudge"
+            onOpen={openPanel}
+            // The Dismiss button is about to unmount; keep keyboard focus nearby.
+            onDismiss={() => {
+              retireNudge();
+              toggleRef.current?.focus();
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -115,14 +171,15 @@ export function AssistantWidget() {
       <button
         ref={toggleRef}
         type="button"
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={() => (open ? close() : openPanel())}
         aria-label={open ? "Close assistant" : "Ask about Omer"}
         aria-expanded={open}
         // Hidden under the full-screen panel, which has its own close button.
         inert={modal}
-        className="fixed right-4 bottom-4 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-[var(--ease-out-strong)] hover:scale-105 active:scale-95 sm:right-6 sm:bottom-6"
+        data-nudging={nudge === "showing" && !open}
+        className="nudge-wiggle fixed right-4 bottom-4 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-150 ease-[var(--ease-out-strong)] hover:scale-105 active:scale-95 sm:right-6 sm:bottom-6"
       >
-        {open ? <X size={22} /> : <ChatCircleDots size={24} weight="fill" />}
+        {open ? <X size={22} /> : <Robot size={26} weight="duotone" />}
       </button>
     </div>
   );
