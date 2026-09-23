@@ -120,7 +120,11 @@ export function AssistantWidget() {
           <AssistantNudge
             key="assistant-nudge"
             onOpen={openPanel}
-            onDismiss={retireNudge}
+            // The Dismiss button is about to unmount; keep keyboard focus nearby.
+            onDismiss={() => {
+              retireNudge();
+              toggleRef.current?.focus();
+            }}
           />
         )}
       </AnimatePresence>

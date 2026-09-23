@@ -263,6 +263,9 @@ describe("AssistantWidget nudge", () => {
       screen.queryByRole("button", { name: nudgeName })
     ).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Ask about Omer" })
+    ).toHaveFocus();
   });
 
   it("never appears if the Assistant is opened before the delay", () => {
