@@ -1,9 +1,10 @@
 import type { ComponentType } from "react";
-import { Orbitron } from "next/font/google";
+import { Nunito, Orbitron } from "next/font/google";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/lib/projects";
 
 const orbitron = Orbitron({ subsets: ["latin"], weight: "700" });
+const nunito = Nunito({ subsets: ["latin"], weight: "800" });
 
 function CommitPetMark() {
   return (
@@ -135,6 +136,50 @@ function QuizipCover() {
   );
 }
 
+function ControlMark() {
+  return (
+    <svg
+      viewBox="0 0 512 512"
+      className="h-16 w-16 drop-shadow-[0_8px_20px_rgba(196,120,20,0.35)] sm:h-20 sm:w-20"
+      aria-hidden="true"
+    >
+      <rect width="512" height="512" rx="112" fill="#F4AA2C" />
+      <rect
+        x="114"
+        y="194"
+        width="284"
+        height="124"
+        rx="62"
+        fill="none"
+        stroke="#381C01"
+        strokeWidth="36"
+      />
+      <circle cx="336" cy="256" r="30" fill="#381C01" />
+    </svg>
+  );
+}
+
+function ControlCover() {
+  return (
+    <div
+      className="flex h-full w-full flex-col items-center justify-center gap-3"
+      style={{
+        background: "linear-gradient(160deg, #FBF8F3 0%, #F1E6D6 100%)",
+      }}
+    >
+      <ControlMark />
+      <p
+        className={cn(
+          nunito.className,
+          "text-lg tracking-tight text-[#2E2418] sm:text-xl"
+        )}
+      >
+        Control
+      </p>
+    </div>
+  );
+}
+
 function SiteCover() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[oklch(0.145_0_0)]">
@@ -151,6 +196,7 @@ function SiteCover() {
 const covers: Record<string, ComponentType> = {
   "commit-pet": CommitPetCover,
   quizip: QuizipCover,
+  control: ControlCover,
   "my-site": SiteCover,
 };
 

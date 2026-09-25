@@ -15,6 +15,23 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "control",
+    title: "Control",
+    summary:
+      "Scans your Wi-Fi for lights, plugs and IR hubs, then puts every device on one screen, running entirely on your home network.",
+    description: [
+      "Control finds the smart devices on your network and gives them one app instead of one per brand. It currently speaks to Yeelight bulbs and strips, Tuya / Smart Life plugs, and Broadlink IR hubs. Through a Broadlink hub it also drives devices that were never smart: for an AC it tests several remote code sets at once to find the one that works, and for a TV or fan you press each button on the old remote once and it learns it.",
+      "The engine is Python with FastAPI, built on existing open source device libraries, and serves a SvelteKit web app designed for phone and desktop equally. Phones connect over the LAN by scanning a QR code and approving a pairing code, and on iPhone it installs to the Home Screen like a native app. Next up are a Windows tray app, scenes, and an MCP server so Claude can switch things on and off.",
+    ],
+    stack: ["Python", "FastAPI", "SvelteKit", "TypeScript"],
+    year: "2026",
+    role: "Solo developer",
+    links: {
+      github: "https://github.com/oBecks/control",
+    },
+    featured: true,
+  },
+  {
     slug: "commit-pet",
     title: "Commit Pet",
     summary:
@@ -76,7 +93,6 @@ export const projects: Project[] = [
     links: {
       github: "https://github.com/oBecks/my-site",
     },
-    featured: true,
   },
 ];
 
